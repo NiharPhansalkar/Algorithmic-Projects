@@ -1,3 +1,3 @@
 # Algorithmic-Projects
 
-This GitHub repository has small projects that have been made by me.
+This GitHub repository contains algorithmic projects made in C language.
