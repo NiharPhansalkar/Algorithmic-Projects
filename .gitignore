@@ -1,5 +1,4 @@
 ### C ###
-# No clue why gitignore.io left these rules out.
 *
 !*.*
 !*/
