@@ -5,12 +5,12 @@
 
 void fill_2darr(int);
 void interpret(int);
-void call_all_functions(int);
+void call_all_functions(int); // Free up main more.
 int print_info_board(int);
 int take_input(void);
 int check_winner(void);
 
-#define MAX_ARR_SIZE 15
+#define MAX_ARR_SIZE 15 // Max input to be taken from user for fgets.
 
 int need_chars = 0, interpret_row = -1, interpret_col = -1, total_moves = 1, zero_or_one = 0;
 char nums_x_o[3][3] = {{'1','2','3'}, {'4','5','6'}, {'7','8','9'}};
@@ -18,10 +18,10 @@ char nums_x_o[3][3] = {{'1','2','3'}, {'4','5','6'}, {'7','8','9'}};
 int main(void)
 {
     printf("\n");
-    fill_2darr(-1);
+    fill_2darr(-1); // -1 due to lack of effect in the function.
     print_info_board(0);
     printf("Player 1 is 'X' and player 2 is 'O'. Please enter number on the cell to put respective tokens.\n");
-    for(total_moves = 1; total_moves <= 9; total_moves++)
+    for(total_moves = 1; total_moves <= 9; total_moves++) // A maximum of 9 moves are possible in a game of tic-tac-toe.
     {
         if(total_moves%2 == 0)
         {
@@ -70,11 +70,11 @@ void fill_2darr(int flag)
         {
             if(row == interpret_row-1 && column == interpret_col-1)
             {
-                if(flag == 0 && nums_x_o[row][column] != 'X' && nums_x_o[row][column] != 'O')
+                if(flag == 0 && nums_x_o[row][column] != 'X' && nums_x_o[row][column] != 'O') // Input player's tokens. flag = 0 represents player 1.
                 {
                     nums_x_o[row][column] = 'X';
                 }
-                else if (flag == 1 && nums_x_o[row][column] != 'O' && nums_x_o[row][column] != 'X')
+                else if (flag == 1 && nums_x_o[row][column] != 'O' && nums_x_o[row][column] != 'X') // Input player's tokens. flag = 1 represents player 2.
                 {
                     nums_x_o[row][column] = 'O';
                 }
@@ -132,18 +132,18 @@ int print_info_board(int recursions)
     }
     else
     {
-        manipulate_row = 0;
-        manipulate_col = 0;
-        recursive_counter = 1;
+        manipulate_row = 0; //reset all values for next iteration. 
+        manipulate_col = 0; //reset all values for next iteration.
+        recursive_counter = 1; //reset all values for next iteration. 
         return 0;
     }
 }
 
 int take_input(void)
 {
-    char store[MAX_ARR_SIZE];
+    char store[MAX_ARR_SIZE]; // Array to store input in.
     char* traverse = store;
-    fgets(store, MAX_ARR_SIZE, stdin);
+    fgets(store, MAX_ARR_SIZE, stdin); // Take input.
     store[strlen(store) - 1] = '\0';
     if(strlen(store) >= 2)
     {
@@ -162,7 +162,7 @@ int take_input(void)
             traverse++;
         }
     }
-    return (atoi(store));   
+    return (atoi(store)); // Convert string to integer.
 }
 
 void interpret(int determine)
