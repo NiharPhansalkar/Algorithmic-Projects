@@ -2,26 +2,33 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <ncurses.h> // Contains UI functions.
 
 void fill_2darr(int);
 void interpret(int);
-void call_all_functions(int); // Free up main more.
+void call_all_functions(int);
 int print_info_board(int);
 int take_input(void);
 int check_winner(void);
 
-#define MAX_ARR_SIZE 15 // Max input to be taken from user for fgets.
+#define MAX_ARR_SIZE 15
 
 int need_chars = 0, interpret_row = -1, interpret_col = -1, total_moves = 1, zero_or_one = 0;
 char nums_x_o[3][3] = {{'1','2','3'}, {'4','5','6'}, {'7','8','9'}};
 
 int main(void)
 {
-    printf("\n");
-    fill_2darr(-1); // -1 due to lack of effect in the function.
+    initscr(); // Start curses mode.
+    raw(); // Disable line buffer of stdin.
+    noecho(); // Don't echo for getch().
+
+    printw("\n");
+    refresh();
+    fill_2darr(-1);
     print_info_board(0);
-    printf("Player 1 is 'X' and player 2 is 'O'. Please enter number on the cell to put respective tokens.\n");
-    for(total_moves = 1; total_moves <= 9; total_moves++) // A maximum of 9 moves are possible in a game of tic-tac-toe.
+    printw("Player 1 is 'X' and player 2 is 'O'. Please enter number on the cell to put respective tokens.\n");
+    refresh();
+    for(total_moves = 1; total_moves <= 9; total_moves++)
     {
         if(total_moves%2 == 0)
         {
@@ -36,11 +43,15 @@ int main(void)
         {
             if(zero_or_one == 0)
             {
-                printf("The winner is : player %d\n\n CONGRATULATIONS!!!", 1);
+                printw("The winner is : player %d\n\nCONGRATULATIONS!!!\n", 1);
+                refresh();
+                getch();
             }
             if(zero_or_one == 1)
             {
-                printf("The winner is : player %d\n\n CONGRATULATIONS!!!", 2);
+                printw("The winner is : player %d\n\nCONGRATULATIONS!!!\n", 2);
+                refresh();
+                getch();
             }
             break;
         }
@@ -49,6 +60,7 @@ int main(void)
             continue;
         }
     }
+    endwin(); // End curses mode.
     return 0;
 }
 
@@ -70,18 +82,19 @@ void fill_2darr(int flag)
         {
             if(row == interpret_row-1 && column == interpret_col-1)
             {
-                if(flag == 0 && nums_x_o[row][column] != 'X' && nums_x_o[row][column] != 'O') // Input player's tokens. flag = 0 represents player 1.
+                if(flag == 0 && nums_x_o[row][column] != 'X' && nums_x_o[row][column] != 'O')
                 {
                     nums_x_o[row][column] = 'X';
                 }
-                else if (flag == 1 && nums_x_o[row][column] != 'O' && nums_x_o[row][column] != 'X') // Input player's tokens. flag = 1 represents player 2.
+                else if (flag == 1 && nums_x_o[row][column] != 'O' && nums_x_o[row][column] != 'X')
                 {
                     nums_x_o[row][column] = 'O';
                 }
                 else
                 {
                     total_moves -= 1;
-                    printf("A token is already present in this spot.\n");
+                    printw("A token is already present in this spot.\n");
+                    refresh();
                 }
             }
         }
@@ -94,78 +107,82 @@ int print_info_board(int recursions)
     static int recursive_counter = 1, manipulate_row = 0, manipulate_col = 0;
     if(recursions == 0)
     {
-        printf("\t %s\n\n", "TIC TAC TOE");
+        printw("\t %s\n\n", "TIC TAC TOE");
+        refresh();
     }
     for(vertical = 0; vertical < 24; vertical++)
     {
-        printf(" ");
+        printw(" ");
+        refresh();
         if(vertical%8 == 0 && vertical != 0)
         {
-            printf("|");
+            printw("|");
+            refresh();
         }
         if(vertical%4 == 0 && vertical%8 != 0 && vertical != 0)
         {
-            printf("%c", nums_x_o[manipulate_row][manipulate_col++]);
+            printw("%c", nums_x_o[manipulate_row][manipulate_col++]);
+            refresh();
             if(vertical%16 == 0)
             {
                 manipulate_row++;
             }
         }
     }
-    printf("\n");
+    printw("\n");
+    refresh();
     if(recursions != 2)
     {
         for(horizontal = 0; horizontal <= 25; horizontal++)
         {
-            printf("-");
+            printw("-");
+            refresh();
             if(horizontal%8 == 0 && horizontal != 0 && horizontal != 24)
             {
-                printf("-");
-                printf("|");
+                printw("-");
+                refresh();
+                printw("|");
+                refresh();
             }
         }
     }
-    printf("\n");
+    printw("\n");
+    refresh();
     if(recursions < 2)
     {
         print_info_board(recursive_counter++);
     }
     else
     {
-        manipulate_row = 0; //reset all values for next iteration. 
-        manipulate_col = 0; //reset all values for next iteration.
-        recursive_counter = 1; //reset all values for next iteration. 
+        manipulate_row = 0;
+        manipulate_col = 0;
+        recursive_counter = 1;
         return 0;
     }
+    return -1;
 }
 
 int take_input(void)
 {
-    char store[MAX_ARR_SIZE]; // Array to store input in.
-    char* traverse = store;
-    fgets(store, MAX_ARR_SIZE, stdin); // Take input.
-    store[strlen(store) - 1] = '\0';
-    if(strlen(store) >= 2)
+    int key;
+    key = getch();
+    if(key >= 48 && key < 58)
     {
-        printf("Please enter the digit number as seen on the screen.\n");
-        call_all_functions(zero_or_one);
+        clear();
+        refresh();
+        return (key-48);  
     }
     else
     {
-        while(*traverse != '\0')
-        {
-            if(!isdigit(*traverse))
-            {
-                printf("Please enter the digit number as seen on the screen.\n");
-                call_all_functions(zero_or_one);
-            }
-            traverse++;
-        }
+        clear();
+        printw("Please enter the number present on the screen. Press any key to play further.\n");
+        refresh();
+        take_input();
     }
-    return (atoi(store)); // Convert string to integer.
+    return -1;
 }
 
-void interpret(int determine)
+void interpret(int determine) // Convert box number into row and column.
 {
     if(determine%3 == 0)
     {
@@ -184,7 +201,7 @@ void interpret(int determine)
     }
 }
 
-int check_winner(void)
+int check_winner(void) // All winning conditions for the game.
 {
     if(nums_x_o[0][0] == nums_x_o[1][1] && nums_x_o[0][0] == nums_x_o[2][2])
     {
@@ -199,6 +216,11 @@ int check_winner(void)
     else if((nums_x_o[0][0] == nums_x_o[1][0] && nums_x_o[0][0] == nums_x_o[2][0]) || 
             (nums_x_o[0][1] == nums_x_o[1][1] && nums_x_o[0][1] == nums_x_o[2][1]) ||
             (nums_x_o[0][2] == nums_x_o[1][2] && nums_x_o[0][2] == nums_x_o[2][2]))
+    {
+        return 1;
+    }
+    else if((nums_x_o[0][0] == nums_x_o[1][1] && nums_x_o[0][0] == nums_x_o[2][2]) ||
+            (nums_x_o[0][2] == nums_x_o[1][1] && nums_x_o[1][1] == nums_x_o[2][0]))
     {
         return 1;
     }
