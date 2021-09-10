@@ -1,6 +1,6 @@
 /*
 Program -: 2048 game
-Made by -: Nihar Phansalkar
+Author -: Nihar Phansalkar
 */
 
 #include <stdio.h>
@@ -21,7 +21,6 @@ void slideArr(int);
 void put_tiles(void); // Defined to reduce redundancy.
 void intepreter(int);
 
-#define UPPER_LIM 16 // Max limit for random numbers to be in.
 #define GRID_DIMENSION 4
 #define UP 0
 #define DOWN 1
@@ -141,7 +140,7 @@ int two_or_four(void) // Returns two or four in the ratio 9:1.
 
 int make_random(void) // Generate a random number between 1 and 16 for two and four pop-ups.
 {
-    int make_num = (rand() % 16) + 1;
+    int make_num = (rand() % (GRID_DIMENSION * GRID_DIMENSION)) + 1;
     return make_num;
 }
 
@@ -319,9 +318,9 @@ void slideArr(int slide) // Modify array as per key-stroke.
             {
                 if(board[row_modify][col_modify] == 0)
                 {
-                    for(check_no_null = col_modify+1; check_no_null < GRID_DIMENSION; check_no_null++) // Search for number.
+                    for(check_no_null = col_modify+1; check_no_null < GRID_DIMENSION; check_no_null++)
                     {
-                        if(board[row_modify][check_no_null] != 0) // Swap to proper position if number is found.
+                        if(board[row_modify][check_no_null] != 0)
                         {
                             temp = board[row_modify][check_no_null];
                             board[row_modify][check_no_null] = 0;
@@ -338,7 +337,7 @@ void slideArr(int slide) // Modify array as per key-stroke.
                     {
                         ;
                     }
-                    if(board[row_modify][col_modify] == board[row_modify][check_no_null]) // Add values.
+                    if(board[row_modify][col_modify] == board[row_modify][check_no_null])
                     {
                         sum = (board[row_modify][col_modify]) * 2;
                         board[row_modify][col_modify] = sum;
