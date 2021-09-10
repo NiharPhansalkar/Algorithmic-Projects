@@ -1,4 +1,7 @@
-//Program to make a reverse polish notation calculator.
+/*
+Program -: Reverse polish notation calculator.
+Author -: Nihar Phansalkar
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
