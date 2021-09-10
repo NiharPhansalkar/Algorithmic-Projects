@@ -1,6 +1,6 @@
 /*
 Program -: Tic Tac Toe Game.
-Made by -: Nihar Phansalkar
+Author -: Nihar Phansalkar
 */
 
 #include <stdio.h>
