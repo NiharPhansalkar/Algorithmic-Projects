@@ -10,25 +10,31 @@ Author -: Nihar Phansalkar
 #include <ncurses.h> // Provides functions for UI.
 
 int print_board(void);
-int make_random(void); // Gives 2 or 4 pseudo-randomly.
-int two_or_four(void); // Defined to give 2 and 4 in the ratio 9:1
+int make_random(void); 
+int two_or_four(void); 
 int player_choice(void);
 int check_win(void);
 int check_loss(void);
 void print_rules(void);
 void fill_arr(void);
-void slideArr(int);
+void slideArr(int); 
 void put_tiles(void); // Defined to reduce redundancy.
 void intepreter(int);
 
+#define MY_NULL 0
+#define INITIAL_INIT -1
+#define WIN 1
+#define LOSS 1
+#define NO_CHANGE 0
 #define GRID_DIMENSION 4
 #define UP 0
 #define DOWN 1
 #define LEFT 2
 #define RIGHT 3
+// ERR is defined in <ncurses.h>
 
 int board[GRID_DIMENSION][GRID_DIMENSION];
-int interpret_row = -1, interpret_col = -1, which_num;
+int interpret_row = INITIAL_INIT, interpret_col = INITIAL_INIT, which_num; // ERR for initial initialization.
 
 int main(void)
 {
@@ -40,7 +46,7 @@ int main(void)
     int one_time, check_choice;
     srand(time(0)); // Seed rand() to produce a random batch of numbers.
     put_tiles();
-    while (check_win() != 1 && check_loss() != 1)
+    while (check_win() != WIN && check_loss() != LOSS)
     {
         if (one_time == 0)
         {
@@ -52,9 +58,9 @@ int main(void)
         }
         print_rules();
         check_choice = player_choice();
-        if(check_choice == -1)
+        if(check_choice == ERR)
         {
-            while(check_choice == -1)
+            while(check_choice == ERR)
                 check_choice = player_choice();
         }
         slideArr(check_choice);
@@ -62,12 +68,12 @@ int main(void)
         print_board();
         refresh();
     }
-    if(check_win() == 1)
+    if(check_win() == WIN)
     {
         printw("\n\nCongratulations! You have won the game!\n");
         refresh();
     }
-    if(check_loss() == 1)
+    if(check_loss() == LOSS)
     {
         printw("\n\n You have lost. Please restart.\n");
     }
@@ -98,7 +104,8 @@ void put_tiles(void)
 
 void fill_arr(void)
 {
-    int row, col, flag = 0;
+    int row, col, flag;
+    enum check {LOW, HIGH};
     for (row = 0; row < GRID_DIMENSION; row++)
     {
         for (col = 0; col < GRID_DIMENSION; col++)
@@ -107,19 +114,19 @@ void fill_arr(void)
             {
                 if (board[row][col] == 0)
                 {
-                    flag = 1;
+                    flag = LOW;
                     board[row][col] = which_num;
                     break;
                 }
                 else
                 {
-                    flag = 1;
+                    flag = HIGH;
                     put_tiles();
                     break;
                 }
             }
         }
-        if (flag == 1)
+        if (flag == HIGH)
         {
             break;
         }
@@ -128,14 +135,7 @@ void fill_arr(void)
 
 int two_or_four(void) // Returns two or four in the ratio 9:1.
 {
-    if (rand() % 10 > 0)
-    {
-        return 2;
-    }
-    else
-    {
-        return 4;
-    }
+    return ((rand()%10) > 0) ? 2 : 4;
 }
 
 int make_random(void) // Generate a random number between 1 and 16 for two and four pop-ups.
@@ -188,7 +188,7 @@ int player_choice(void)
         refresh();
         print_board();
         refresh();
-        return -1;
+        return ERR;
     }
 }
 
@@ -201,15 +201,15 @@ int check_win(void)
         {
             if (board[row][col] == 2048)
             {
-                return 1;
+                return WIN;
             }
             else
             {
-                return 0;
+                return NO_CHANGE;
             }
         }
     }
-    return -1;
+    return ERR;
 }
 
 int check_loss(void)
@@ -222,15 +222,15 @@ int check_loss(void)
         {
             if(board[row][col] != 0)
             {
-                flag = 1;
+                flag = LOSS;
             }
             else
             {
-                flag = 0;
+                flag = NO_CHANGE;
                 break;
             }
         }
-        if(flag == 0)
+        if(flag == NO_CHANGE)
         {
             break;
         }
@@ -241,7 +241,7 @@ int check_loss(void)
 int print_board(void) // Print out a 4x4 board.
 {
     int vertical, horizontal, p_col = 0;
-    static int p_row = -1, recurse = 1;
+    static int p_row = INITIAL_INIT, recurse = 1;
 
     if (recurse != 1)
     {
@@ -298,11 +298,11 @@ int print_board(void) // Print out a 4x4 board.
     }
     else
     {
-        p_row = -1;
+        p_row = INITIAL_INIT;
         recurse = 1;
         return 0;
     }
-    return -1;
+    return ERR;
 }
 
 void slideArr(int slide) // Modify array as per key-stroke.
@@ -316,24 +316,24 @@ void slideArr(int slide) // Modify array as per key-stroke.
         {
             for(col_modify = 0; col_modify < GRID_DIMENSION-1; col_modify++)
             {
-                if(board[row_modify][col_modify] == 0)
+                if(board[row_modify][col_modify] == MY_NULL)
                 {
                     for(check_no_null = col_modify+1; check_no_null < GRID_DIMENSION; check_no_null++)
                     {
-                        if(board[row_modify][check_no_null] != 0)
+                        if(board[row_modify][check_no_null] != MY_NULL)
                         {
                             temp = board[row_modify][check_no_null];
-                            board[row_modify][check_no_null] = 0;
+                            board[row_modify][check_no_null] = MY_NULL;
                             board[row_modify][col_modify] = temp;
                             temp = 0;
                             break;
                         }
                     }
                 }
-                if(board[row_modify][col_modify] != 0)
+                if(board[row_modify][col_modify] != MY_NULL)
                 {
                     check_no_null = col_modify;
-                    while(board[row_modify][++check_no_null] == 0 && check_no_null < GRID_DIMENSION-1)
+                    while(board[row_modify][++check_no_null] == MY_NULL && check_no_null < GRID_DIMENSION-1)
                     {
                         ;
                     }
@@ -341,7 +341,7 @@ void slideArr(int slide) // Modify array as per key-stroke.
                     {
                         sum = (board[row_modify][col_modify]) * 2;
                         board[row_modify][col_modify] = sum;
-                        board[row_modify][check_no_null] = 0;
+                        board[row_modify][check_no_null] = MY_NULL;
                     }
                 }
             }
@@ -353,24 +353,24 @@ void slideArr(int slide) // Modify array as per key-stroke.
         {
             for(col_modify = GRID_DIMENSION-1; col_modify > 0; col_modify--)
             {
-                if(board[row_modify][col_modify] == 0)
+                if(board[row_modify][col_modify] == MY_NULL)
                 {
                     for(check_no_null = col_modify-1; check_no_null >= 0; check_no_null--)
                     {
                         if(board[row_modify][check_no_null] != 0)
                         {
                             temp = board[row_modify][check_no_null];
-                            board[row_modify][check_no_null] = 0;
+                            board[row_modify][check_no_null] = MY_NULL;
                             board[row_modify][col_modify] = temp;
                             temp = 0;
                             break;
                         }
                     }
                 }
-                if(board[row_modify][col_modify] != 0)
+                if(board[row_modify][col_modify] != MY_NULL)
                 {
                     check_no_null = col_modify;
-                    while(board[row_modify][--check_no_null] == 0 && check_no_null > 0)
+                    while(board[row_modify][--check_no_null] == MY_NULL && check_no_null > 0)
                     {
                         ;
                     }
@@ -378,7 +378,7 @@ void slideArr(int slide) // Modify array as per key-stroke.
                     {
                         sum = (board[row_modify][col_modify]) * 2;
                         board[row_modify][col_modify] = sum;
-                        board[row_modify][check_no_null] = 0;
+                        board[row_modify][check_no_null] = MY_NULL;
                     }
                 }
             }
@@ -390,24 +390,24 @@ void slideArr(int slide) // Modify array as per key-stroke.
         {
             for(row_modify = 0; row_modify < GRID_DIMENSION-1; row_modify++)
             {
-                if(board[row_modify][col_modify] == 0)
+                if(board[row_modify][col_modify] == MY_NULL)
                 {
                     for(check_no_null = row_modify+1; check_no_null < GRID_DIMENSION; check_no_null++)
                     {
-                        if(board[check_no_null][col_modify] != 0)
+                        if(board[check_no_null][col_modify] != MY_NULL)
                         {
                             temp = board[check_no_null][col_modify];
-                            board[check_no_null][col_modify] = 0;
+                            board[check_no_null][col_modify] = MY_NULL;
                             board[row_modify][col_modify] = temp;
                             temp = 0;
                             break;
                         }
                     }
                 }
-                if(board[row_modify][col_modify] != 0)
+                if(board[row_modify][col_modify] != MY_NULL)
                 {
                     check_no_null = row_modify;
-                    while(board[++check_no_null][col_modify] == 0 && check_no_null < GRID_DIMENSION-1)
+                    while(board[++check_no_null][col_modify] == MY_NULL && check_no_null < GRID_DIMENSION-1)
                     {
                         ;
                     }
@@ -415,7 +415,7 @@ void slideArr(int slide) // Modify array as per key-stroke.
                     {
                         sum = (board[row_modify][col_modify]) * 2;
                         board[row_modify][col_modify] = sum;
-                        board[check_no_null][col_modify] = 0;
+                        board[check_no_null][col_modify] = MY_NULL;
                     }
                 }
             }
@@ -427,24 +427,24 @@ void slideArr(int slide) // Modify array as per key-stroke.
         {
             for(row_modify = GRID_DIMENSION-1; row_modify > 0; row_modify--)
             {
-                if(board[row_modify][col_modify] == 0)
+                if(board[row_modify][col_modify] == MY_NULL)
                 {
                     for(check_no_null = row_modify-1; check_no_null >= 0; check_no_null--)
                     {
-                        if(board[check_no_null][col_modify] != 0)
+                        if(board[check_no_null][col_modify] != MY_NULL)
                         {
                             temp = board[check_no_null][col_modify];
-                            board[check_no_null][col_modify] = 0;
+                            board[check_no_null][col_modify] = MY_NULL;
                             board[row_modify][col_modify] = temp;
                             temp = 0;
                             break;
                         }
                     }
                 }
-                if(board[row_modify][col_modify] != 0)
+                if(board[row_modify][col_modify] != MY_NULL)
                 {
                     check_no_null = row_modify;
-                    while(board[--check_no_null][col_modify] == 0 && check_no_null > 0)
+                    while(board[--check_no_null][col_modify] == MY_NULL && check_no_null > 0)
                     {
                         ;
                     }
@@ -452,7 +452,7 @@ void slideArr(int slide) // Modify array as per key-stroke.
                     {
                         sum = (board[row_modify][col_modify]) * 2;
                         board[row_modify][col_modify] = sum;
-                        board[check_no_null][col_modify] = 0;
+                        board[check_no_null][col_modify] = MY_NULL;
                     }
                 }
             }
