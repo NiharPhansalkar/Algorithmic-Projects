@@ -17,7 +17,10 @@ int check_win(void);
 int check_loss(void);
 void print_rules(void);
 void fill_arr(void);
-void slideArr(int); 
+void slideArr_left(void); 
+void slideArr_right(void);
+void slideArr_up(void);
+void slideArr_down(void);
 void put_tiles(void); // Defined to reduce redundancy.
 void intepreter(int);
 
@@ -57,13 +60,37 @@ int main(void)
             one_time++;
         }
         print_rules();
+
         check_choice = player_choice();
+
         if(check_choice == ERR)
         {
             while(check_choice == ERR)
                 check_choice = player_choice();
         }
-        slideArr(check_choice);
+
+        switch(check_choice)
+        {
+            case LEFT :
+                slideArr_left();
+                break;
+
+            case RIGHT :
+                slideArr_right();
+                break;
+
+            case UP :
+                slideArr_up();
+                break;
+
+            case DOWN :
+                slideArr_down();
+                break;
+
+            default : 
+                break;
+        }
+        
         put_tiles();
         print_board();
         refresh();
@@ -305,155 +332,164 @@ int print_board(void) // Print out a 4x4 board.
     return ERR;
 }
 
-void slideArr(int slide) // Modify array as per key-stroke.
+void slideArr_left(void) // Modify array as per left key-stroke.
 {
     int row_modify, col_modify, check_no_null;
     int temp, sum;
 
-    if(slide == LEFT)
+    for(row_modify = 0; row_modify < GRID_DIMENSION; row_modify++)
     {
-        for(row_modify = 0; row_modify < GRID_DIMENSION; row_modify++)
+        for(col_modify = 0; col_modify < GRID_DIMENSION-1; col_modify++)
         {
-            for(col_modify = 0; col_modify < GRID_DIMENSION-1; col_modify++)
+            if(board[row_modify][col_modify] == MY_NULL)
             {
-                if(board[row_modify][col_modify] == MY_NULL)
+                for(check_no_null = col_modify+1; check_no_null < GRID_DIMENSION; check_no_null++)
                 {
-                    for(check_no_null = col_modify+1; check_no_null < GRID_DIMENSION; check_no_null++)
+                    if(board[row_modify][check_no_null] != MY_NULL)
                     {
-                        if(board[row_modify][check_no_null] != MY_NULL)
-                        {
-                            temp = board[row_modify][check_no_null];
-                            board[row_modify][check_no_null] = MY_NULL;
-                            board[row_modify][col_modify] = temp;
-                            temp = 0;
-                            break;
-                        }
-                    }
-                }
-                if(board[row_modify][col_modify] != MY_NULL)
-                {
-                    check_no_null = col_modify;
-                    while(board[row_modify][++check_no_null] == MY_NULL && check_no_null < GRID_DIMENSION-1)
-                    {
-                        ;
-                    }
-                    if(board[row_modify][col_modify] == board[row_modify][check_no_null])
-                    {
-                        sum = (board[row_modify][col_modify]) * 2;
-                        board[row_modify][col_modify] = sum;
+                        temp = board[row_modify][check_no_null];
                         board[row_modify][check_no_null] = MY_NULL;
+                        board[row_modify][col_modify] = temp;
+                        temp = 0;
+                        break;
                     }
+                }
+            }
+            if(board[row_modify][col_modify] != MY_NULL)
+            {
+                check_no_null = col_modify;
+                while(board[row_modify][++check_no_null] == MY_NULL && check_no_null < GRID_DIMENSION-1)
+                {
+                    ;
+                }
+                if(board[row_modify][col_modify] == board[row_modify][check_no_null])
+                {
+                    sum = (board[row_modify][col_modify]) * 2;
+                    board[row_modify][col_modify] = sum;
+                    board[row_modify][check_no_null] = MY_NULL;
                 }
             }
         }
     }
-    else if (slide == RIGHT)
+}
+
+void slideArr_right(void) // Modify array as per right key-stroke.
+{
+    int row_modify, col_modify, check_no_null;
+    int temp, sum;
+
+    for(row_modify = 0; row_modify < GRID_DIMENSION; row_modify++)
     {
-        for(row_modify = 0; row_modify < GRID_DIMENSION; row_modify++)
+        for(col_modify = GRID_DIMENSION-1; col_modify > 0; col_modify--)
         {
-            for(col_modify = GRID_DIMENSION-1; col_modify > 0; col_modify--)
+            if(board[row_modify][col_modify] == MY_NULL)
             {
-                if(board[row_modify][col_modify] == MY_NULL)
+                for(check_no_null = col_modify-1; check_no_null >= 0; check_no_null--)
                 {
-                    for(check_no_null = col_modify-1; check_no_null >= 0; check_no_null--)
+                    if(board[row_modify][check_no_null] != 0)
                     {
-                        if(board[row_modify][check_no_null] != 0)
-                        {
-                            temp = board[row_modify][check_no_null];
-                            board[row_modify][check_no_null] = MY_NULL;
-                            board[row_modify][col_modify] = temp;
-                            temp = 0;
-                            break;
-                        }
-                    }
-                }
-                if(board[row_modify][col_modify] != MY_NULL)
-                {
-                    check_no_null = col_modify;
-                    while(board[row_modify][--check_no_null] == MY_NULL && check_no_null > 0)
-                    {
-                        ;
-                    }
-                    if(board[row_modify][col_modify] == board[row_modify][check_no_null])
-                    {
-                        sum = (board[row_modify][col_modify]) * 2;
-                        board[row_modify][col_modify] = sum;
+                        temp = board[row_modify][check_no_null];
                         board[row_modify][check_no_null] = MY_NULL;
+                        board[row_modify][col_modify] = temp;
+                        temp = 0;
+                        break;
                     }
+                }
+            }
+            if(board[row_modify][col_modify] != MY_NULL)
+            {
+                check_no_null = col_modify;
+                while(board[row_modify][--check_no_null] == MY_NULL && check_no_null > 0)
+                {
+                    ;
+                }
+                if(board[row_modify][col_modify] == board[row_modify][check_no_null])
+                {
+                    sum = (board[row_modify][col_modify]) * 2;
+                    board[row_modify][col_modify] = sum;
+                    board[row_modify][check_no_null] = MY_NULL;
                 }
             }
         }
     }
-    else if (slide == UP)
+}
+
+void slideArr_up(void) // Modify array as per up key-stroke.
+{
+    int row_modify, col_modify, check_no_null;
+    int temp, sum;
+
+    for(col_modify = 0; col_modify < GRID_DIMENSION; col_modify++)
     {
-        for(col_modify = 0; col_modify < GRID_DIMENSION; col_modify++)
+        for(row_modify = 0; row_modify < GRID_DIMENSION-1; row_modify++)
         {
-            for(row_modify = 0; row_modify < GRID_DIMENSION-1; row_modify++)
+            if(board[row_modify][col_modify] == MY_NULL)
             {
-                if(board[row_modify][col_modify] == MY_NULL)
+                for(check_no_null = row_modify+1; check_no_null < GRID_DIMENSION; check_no_null++)
                 {
-                    for(check_no_null = row_modify+1; check_no_null < GRID_DIMENSION; check_no_null++)
+                    if(board[check_no_null][col_modify] != MY_NULL)
                     {
-                        if(board[check_no_null][col_modify] != MY_NULL)
-                        {
-                            temp = board[check_no_null][col_modify];
-                            board[check_no_null][col_modify] = MY_NULL;
-                            board[row_modify][col_modify] = temp;
-                            temp = 0;
-                            break;
-                        }
+                        temp = board[check_no_null][col_modify];
+                        board[check_no_null][col_modify] = MY_NULL;
+                        board[row_modify][col_modify] = temp;
+                        temp = 0;
+                        break;
                     }
                 }
-                if(board[row_modify][col_modify] != MY_NULL)
+            }
+            if(board[row_modify][col_modify] != MY_NULL)
+            {
+                check_no_null = row_modify;
+                while(board[++check_no_null][col_modify] == MY_NULL && check_no_null < GRID_DIMENSION-1)
                 {
-                    check_no_null = row_modify;
-                    while(board[++check_no_null][col_modify] == MY_NULL && check_no_null < GRID_DIMENSION-1)
-                    {
-                        ;
-                    }
-                    if(board[row_modify][col_modify] == board[check_no_null][col_modify])
-                    {
-                        sum = (board[row_modify][col_modify]) * 2;
-                        board[row_modify][col_modify] = sum;
-                        board[check_no_null][col_modify] = MY_NULL;
-                    }
+                    ;
+                }
+                if(board[row_modify][col_modify] == board[check_no_null][col_modify])
+                {
+                    sum = (board[row_modify][col_modify]) * 2;
+                    board[row_modify][col_modify] = sum;
+                    board[check_no_null][col_modify] = MY_NULL;
                 }
             }
         }
     }
-    else if (slide == DOWN)
+}
+
+void slideArr_down(void) // Modify array as per down key-stroke.
+{
+    int row_modify, col_modify, check_no_null;
+    int temp, sum;
+    
+    for(col_modify = 0; col_modify < GRID_DIMENSION; col_modify++)
     {
-        for(col_modify = 0; col_modify < GRID_DIMENSION; col_modify++)
+        for(row_modify = GRID_DIMENSION-1; row_modify > 0; row_modify--)
         {
-            for(row_modify = GRID_DIMENSION-1; row_modify > 0; row_modify--)
+            if(board[row_modify][col_modify] == MY_NULL)
             {
-                if(board[row_modify][col_modify] == MY_NULL)
+                for(check_no_null = row_modify-1; check_no_null >= 0; check_no_null--)
                 {
-                    for(check_no_null = row_modify-1; check_no_null >= 0; check_no_null--)
+                    if(board[check_no_null][col_modify] != MY_NULL)
                     {
-                        if(board[check_no_null][col_modify] != MY_NULL)
-                        {
-                            temp = board[check_no_null][col_modify];
-                            board[check_no_null][col_modify] = MY_NULL;
-                            board[row_modify][col_modify] = temp;
-                            temp = 0;
-                            break;
-                        }
+                        temp = board[check_no_null][col_modify];
+                        board[check_no_null][col_modify] = MY_NULL;
+                        board[row_modify][col_modify] = temp;
+                        temp = 0;
+                        break;
                     }
                 }
-                if(board[row_modify][col_modify] != MY_NULL)
+            }
+            if(board[row_modify][col_modify] != MY_NULL)
+            {
+                check_no_null = row_modify;
+                while(board[--check_no_null][col_modify] == MY_NULL && check_no_null > 0)
                 {
-                    check_no_null = row_modify;
-                    while(board[--check_no_null][col_modify] == MY_NULL && check_no_null > 0)
-                    {
-                        ;
-                    }
-                    if(board[row_modify][col_modify] == board[check_no_null][col_modify])
-                    {
-                        sum = (board[row_modify][col_modify]) * 2;
-                        board[row_modify][col_modify] = sum;
-                        board[check_no_null][col_modify] = MY_NULL;
-                    }
+                    ;
+                }
+                if(board[row_modify][col_modify] == board[check_no_null][col_modify])
+                {
+                    sum = (board[row_modify][col_modify]) * 2;
+                    board[row_modify][col_modify] = sum;
+                    board[check_no_null][col_modify] = MY_NULL;
                 }
             }
         }
