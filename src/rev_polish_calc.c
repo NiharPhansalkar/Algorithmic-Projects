@@ -26,9 +26,9 @@ void get_num(void)
 {
     int c, i = 0;
     char num_in[MAX];
-    while ((c = getchar()) != EOF) 
+    while ((c = getchar()) != EOF)
     {
-        if(c >= '0' && c <= '9' && c != '.')//Input before decimal point
+        if (c >= '0' && c <= '9' && c != '.') //Input before decimal point
         {
             num_in[i] = c;
             i++;
@@ -38,33 +38,32 @@ void get_num(void)
             num_in[i] = '.';
             i++;
         }
-        if(num_in[i-1] == '.')
+        if (num_in[i - 1] == '.')
         {
-            if(c >= '0' && c <= '9' && c != '.')// Input after decimal point.
+            if (c >= '0' && c <= '9' && c != '.') // Input after decimal point.
             {
                 num_in[i] = c;
                 i++;
             }
         }
-        if(c == '+' || c == '-' || c == '*' || c == '/' || c == '%')
+        if (c == '+' || c == '-' || c == '*' || c == '/' || c == '%')
         {
             operator((char)c);
         }
-        if(c == '\n')
+        if (c == '\n')
         {
             operator((char)c);
         }
-        if(c == ' ')
+        if (c == ' ')
         {
             break;
         }
     }
     num_in[i] = '\0';
-    if(atof(num_in) != 0)
-    {    
+    if (atof(num_in) != 0)
+    {
         push(atof(num_in));
     }
-    
 }
 
 int p_a_p = 0, push_pos = 0;
@@ -72,7 +71,7 @@ double store[MAX];
 
 void push(double oprand)
 {
-    if(p_a_p < MAX)
+    if (p_a_p < MAX)
     {
         store[p_a_p] = oprand;
         p_a_p++;
@@ -82,14 +81,13 @@ void push(double oprand)
     {
         printf("Stack overflow\n");
     }
-        get_num();
-    
+    get_num();
 }
 
-double pop (void)
+double pop(void)
 {
     --push_pos;
-    if(push_pos >= 0)
+    if (push_pos >= 0)
     {
         return (store[push_pos]);
     }
@@ -104,48 +102,48 @@ void operator(char op)
 {
     double op2, result, op3;
     int div;
-    switch(op)
+    switch (op)
     {
-        case '+':
-            result = pop()+pop();
+    case '+':
+        result = pop() + pop();
+        push(result);
+        break;
+    case '-':
+        op2 = pop();
+        result = pop() - op2;
+        push(result);
+        break;
+    case '*':
+        result = pop() * pop();
+        push(result);
+        break;
+    case '/':
+        op2 = pop();
+        if (op2 != 0)
+        {
+            result = pop() / op2;
             push(result);
-            break;
-        case '-':
-            op2 = pop();
-            result = pop() - op2;
-            push(result);
-            break;
-        case '*':
-            result = pop()*pop();
-            push(result);
-            break;
-        case '/':
-            op2 = pop();
-            if(op2 != 0)
-            {
-                result = pop()/op2;
-                push(result);
-            }
-            else
-            {
-                printf("Can't divide by zero.\n");
-                exit(0);
-            }
-            break;
-        case '%':
-            op2 = pop();
-            op3 = pop();
-            div = op3/op2;
-            op2 = op2*div;
-            result = op3-op2;   
-            push(result);
-            break;
-        case '\n':
-            printf("%-3f\n", pop());
+        }
+        else
+        {
+            printf("Can't divide by zero.\n");
             exit(0);
-            break;
-        default:
-            printf("Error.\n");
-            break;
+        }
+        break;
+    case '%':
+        op2 = pop();
+        op3 = pop();
+        div = op3 / op2;
+        op2 = op2 * div;
+        result = op3 - op2;
+        push(result);
+        break;
+    case '\n':
+        printf("%-3f\n", pop());
+        exit(0);
+        break;
+    default:
+        printf("Error.\n");
+        break;
     }
 }

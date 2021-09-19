@@ -10,14 +10,14 @@ Author -: Nihar Phansalkar
 #include <ncurses.h> // Provides functions for UI.
 
 int print_board(void);
-int make_random(void); 
-int two_or_four(void); 
+int make_random(void);
+int two_or_four(void);
 int player_choice(void);
 int check_win(void);
 int check_loss(void);
 void print_rules(void);
 void fill_arr(void);
-void slideArr_left(void); 
+void slideArr_left(void);
 void slideArr_right(void);
 void slideArr_up(void);
 void slideArr_down(void);
@@ -63,44 +63,44 @@ int main(void)
 
         check_choice = player_choice();
 
-        if(check_choice == ERR)
+        if (check_choice == ERR)
         {
-            while(check_choice == ERR)
+            while (check_choice == ERR)
                 check_choice = player_choice();
         }
 
-        switch(check_choice)
+        switch (check_choice)
         {
-            case LEFT :
-                slideArr_left();
-                break;
+        case LEFT:
+            slideArr_left();
+            break;
 
-            case RIGHT :
-                slideArr_right();
-                break;
+        case RIGHT:
+            slideArr_right();
+            break;
 
-            case UP :
-                slideArr_up();
-                break;
+        case UP:
+            slideArr_up();
+            break;
 
-            case DOWN :
-                slideArr_down();
-                break;
+        case DOWN:
+            slideArr_down();
+            break;
 
-            default : 
-                break;
+        default:
+            break;
         }
-        
+
         put_tiles();
         print_board();
         refresh();
     }
-    if(check_win() == WIN)
+    if (check_win() == WIN)
     {
         printw("\n\nCongratulations! You have won the game!\n");
         refresh();
     }
-    if(check_loss() == LOSS)
+    if (check_loss() == LOSS)
     {
         printw("\n\n You have lost. Please restart.\n");
     }
@@ -132,7 +132,11 @@ void put_tiles(void)
 void fill_arr(void)
 {
     int row, col, flag;
-    enum check {LOW, HIGH};
+    enum check
+    {
+        LOW,
+        HIGH
+    };
     for (row = 0; row < GRID_DIMENSION; row++)
     {
         for (col = 0; col < GRID_DIMENSION; col++)
@@ -162,7 +166,7 @@ void fill_arr(void)
 
 int two_or_four(void) // Returns two or four in the ratio 9:1.
 {
-    return ((rand()%10) > 0) ? 2 : 4;
+    return ((rand() % 10) > 0) ? 2 : 4;
 }
 
 int make_random(void) // Generate a random number between 1 and 16 for two and four pop-ups.
@@ -209,7 +213,7 @@ int player_choice(void)
         refresh();
         return DOWN;
 
-    default: 
+    default:
         clear();
         printw("Please press the arrow keys only.\n");
         refresh();
@@ -247,7 +251,7 @@ int check_loss(void)
     {
         for (col = 0; col < GRID_DIMENSION; col++)
         {
-            if(board[row][col] != 0)
+            if (board[row][col] != 0)
             {
                 flag = LOSS;
             }
@@ -257,7 +261,7 @@ int check_loss(void)
                 break;
             }
         }
-        if(flag == NO_CHANGE)
+        if (flag == NO_CHANGE)
         {
             break;
         }
@@ -337,15 +341,15 @@ void slideArr_left(void) // Modify array as per left key-stroke.
     int row_modify, col_modify, check_no_null;
     int temp, sum;
 
-    for(row_modify = 0; row_modify < GRID_DIMENSION; row_modify++)
+    for (row_modify = 0; row_modify < GRID_DIMENSION; row_modify++)
     {
-        for(col_modify = 0; col_modify < GRID_DIMENSION-1; col_modify++)
+        for (col_modify = 0; col_modify < GRID_DIMENSION - 1; col_modify++)
         {
-            if(board[row_modify][col_modify] == MY_NULL)
+            if (board[row_modify][col_modify] == MY_NULL)
             {
-                for(check_no_null = col_modify+1; check_no_null < GRID_DIMENSION; check_no_null++)
+                for (check_no_null = col_modify + 1; check_no_null < GRID_DIMENSION; check_no_null++)
                 {
-                    if(board[row_modify][check_no_null] != MY_NULL)
+                    if (board[row_modify][check_no_null] != MY_NULL)
                     {
                         temp = board[row_modify][check_no_null];
                         board[row_modify][check_no_null] = MY_NULL;
@@ -355,14 +359,14 @@ void slideArr_left(void) // Modify array as per left key-stroke.
                     }
                 }
             }
-            if(board[row_modify][col_modify] != MY_NULL)
+            if (board[row_modify][col_modify] != MY_NULL)
             {
                 check_no_null = col_modify;
-                while(board[row_modify][++check_no_null] == MY_NULL && check_no_null < GRID_DIMENSION-1)
+                while (board[row_modify][++check_no_null] == MY_NULL && check_no_null < GRID_DIMENSION - 1)
                 {
                     ;
                 }
-                if(board[row_modify][col_modify] == board[row_modify][check_no_null])
+                if (board[row_modify][col_modify] == board[row_modify][check_no_null])
                 {
                     sum = (board[row_modify][col_modify]) * 2;
                     board[row_modify][col_modify] = sum;
@@ -378,15 +382,15 @@ void slideArr_right(void) // Modify array as per right key-stroke.
     int row_modify, col_modify, check_no_null;
     int temp, sum;
 
-    for(row_modify = 0; row_modify < GRID_DIMENSION; row_modify++)
+    for (row_modify = 0; row_modify < GRID_DIMENSION; row_modify++)
     {
-        for(col_modify = GRID_DIMENSION-1; col_modify > 0; col_modify--)
+        for (col_modify = GRID_DIMENSION - 1; col_modify > 0; col_modify--)
         {
-            if(board[row_modify][col_modify] == MY_NULL)
+            if (board[row_modify][col_modify] == MY_NULL)
             {
-                for(check_no_null = col_modify-1; check_no_null >= 0; check_no_null--)
+                for (check_no_null = col_modify - 1; check_no_null >= 0; check_no_null--)
                 {
-                    if(board[row_modify][check_no_null] != 0)
+                    if (board[row_modify][check_no_null] != 0)
                     {
                         temp = board[row_modify][check_no_null];
                         board[row_modify][check_no_null] = MY_NULL;
@@ -396,14 +400,14 @@ void slideArr_right(void) // Modify array as per right key-stroke.
                     }
                 }
             }
-            if(board[row_modify][col_modify] != MY_NULL)
+            if (board[row_modify][col_modify] != MY_NULL)
             {
                 check_no_null = col_modify;
-                while(board[row_modify][--check_no_null] == MY_NULL && check_no_null > 0)
+                while (board[row_modify][--check_no_null] == MY_NULL && check_no_null > 0)
                 {
                     ;
                 }
-                if(board[row_modify][col_modify] == board[row_modify][check_no_null])
+                if (board[row_modify][col_modify] == board[row_modify][check_no_null])
                 {
                     sum = (board[row_modify][col_modify]) * 2;
                     board[row_modify][col_modify] = sum;
@@ -419,15 +423,15 @@ void slideArr_up(void) // Modify array as per up key-stroke.
     int row_modify, col_modify, check_no_null;
     int temp, sum;
 
-    for(col_modify = 0; col_modify < GRID_DIMENSION; col_modify++)
+    for (col_modify = 0; col_modify < GRID_DIMENSION; col_modify++)
     {
-        for(row_modify = 0; row_modify < GRID_DIMENSION-1; row_modify++)
+        for (row_modify = 0; row_modify < GRID_DIMENSION - 1; row_modify++)
         {
-            if(board[row_modify][col_modify] == MY_NULL)
+            if (board[row_modify][col_modify] == MY_NULL)
             {
-                for(check_no_null = row_modify+1; check_no_null < GRID_DIMENSION; check_no_null++)
+                for (check_no_null = row_modify + 1; check_no_null < GRID_DIMENSION; check_no_null++)
                 {
-                    if(board[check_no_null][col_modify] != MY_NULL)
+                    if (board[check_no_null][col_modify] != MY_NULL)
                     {
                         temp = board[check_no_null][col_modify];
                         board[check_no_null][col_modify] = MY_NULL;
@@ -437,14 +441,14 @@ void slideArr_up(void) // Modify array as per up key-stroke.
                     }
                 }
             }
-            if(board[row_modify][col_modify] != MY_NULL)
+            if (board[row_modify][col_modify] != MY_NULL)
             {
                 check_no_null = row_modify;
-                while(board[++check_no_null][col_modify] == MY_NULL && check_no_null < GRID_DIMENSION-1)
+                while (board[++check_no_null][col_modify] == MY_NULL && check_no_null < GRID_DIMENSION - 1)
                 {
                     ;
                 }
-                if(board[row_modify][col_modify] == board[check_no_null][col_modify])
+                if (board[row_modify][col_modify] == board[check_no_null][col_modify])
                 {
                     sum = (board[row_modify][col_modify]) * 2;
                     board[row_modify][col_modify] = sum;
@@ -459,16 +463,16 @@ void slideArr_down(void) // Modify array as per down key-stroke.
 {
     int row_modify, col_modify, check_no_null;
     int temp, sum;
-    
-    for(col_modify = 0; col_modify < GRID_DIMENSION; col_modify++)
+
+    for (col_modify = 0; col_modify < GRID_DIMENSION; col_modify++)
     {
-        for(row_modify = GRID_DIMENSION-1; row_modify > 0; row_modify--)
+        for (row_modify = GRID_DIMENSION - 1; row_modify > 0; row_modify--)
         {
-            if(board[row_modify][col_modify] == MY_NULL)
+            if (board[row_modify][col_modify] == MY_NULL)
             {
-                for(check_no_null = row_modify-1; check_no_null >= 0; check_no_null--)
+                for (check_no_null = row_modify - 1; check_no_null >= 0; check_no_null--)
                 {
-                    if(board[check_no_null][col_modify] != MY_NULL)
+                    if (board[check_no_null][col_modify] != MY_NULL)
                     {
                         temp = board[check_no_null][col_modify];
                         board[check_no_null][col_modify] = MY_NULL;
@@ -478,14 +482,14 @@ void slideArr_down(void) // Modify array as per down key-stroke.
                     }
                 }
             }
-            if(board[row_modify][col_modify] != MY_NULL)
+            if (board[row_modify][col_modify] != MY_NULL)
             {
                 check_no_null = row_modify;
-                while(board[--check_no_null][col_modify] == MY_NULL && check_no_null > 0)
+                while (board[--check_no_null][col_modify] == MY_NULL && check_no_null > 0)
                 {
                     ;
                 }
-                if(board[row_modify][col_modify] == board[check_no_null][col_modify])
+                if (board[row_modify][col_modify] == board[check_no_null][col_modify])
                 {
                     sum = (board[row_modify][col_modify]) * 2;
                     board[row_modify][col_modify] = sum;
