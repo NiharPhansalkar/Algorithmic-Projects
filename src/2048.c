@@ -1,8 +1,3 @@
-/*
-Program -: 2048 game
-Author -: Nihar Phansalkar
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
